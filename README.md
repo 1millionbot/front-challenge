@@ -1,7 +1,3 @@
-# Deploy in Cloud Run
-gcloud run deploy --source .
-
-# Programaciones
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.4.
 

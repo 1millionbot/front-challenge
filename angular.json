@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "programaciones": {
+    "front-challenge": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/programaciones",
+            "outputPath": "dist/front-challenge",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "allowedCommonJsDependencies": ["html-to-docx"],
@@ -76,10 +76,10 @@
               "port": 8000
             },
             "production": {
-              "buildTarget": "programaciones:build:production"
+              "buildTarget": "front-challenge:build:production"
             },
             "development": {
-              "buildTarget": "programaciones:build:development"
+              "buildTarget": "front-challenge:build:development"
             }
           },
           "defaultConfiguration": "development"
