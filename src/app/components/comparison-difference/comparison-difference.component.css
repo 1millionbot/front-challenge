@@ -1,0 +1,150 @@
+
+
+.content-page {
+    flex: 1;
+    padding: 20px; 
+  }
+.container {
+  --bs-gutter-x: 0rem !important;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  border: 1px solid !important;
+  border-right: 1px solid !important;
+}
+.grey-color-bg {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding-bottom: 20px;
+  background-color: #ececeb;
+} 
+.example-full-width {
+  width: 350px;
+}
+.fieldsup {
+  padding-left: 20px;
+  padding-bottom: 20px;
+}
+.buscar {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+  .pageHeading {
+  padding: 25px !important;
+  }
+  .recientesBtn {
+    height: 30px;
+    border: 0.5px solid;
+    border-bottom: 1.5px solid;
+    font-size: 13px;
+    font-weight: 300;
+    padding: 6px;
+  }
+  .recientesText {
+    padding-right: 4px;
+  }
+  .multiselectFields {
+    min-width: 100%;
+  }
+  
+  .buscarBtn {
+    width: 100%;
+    height: 77%;
+    border: 1px solid;
+    border-bottom: 1.5px solid;
+  }
+  .Cargarbtn {
+    border: 0.5px solid;
+    border-bottom: 1.5px solid;
+    font-size: 14px;
+  }
+  .cargarbtnText {
+    padding-right: 4px;
+  }
+  .navItemsHeader{
+    flex:1;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 40px;
+  }
+
+  .btn-size {
+    width: 50%;
+  }
+  #tabgrp {
+    width: 40%;
+  }
+
+  .highlight {
+    background-color: yellow !important; /* Choose a color that stands out */
+  }
+  
+
+.highlighted {
+  background-color: yellow;
+  font-weight: bold;
+}
+
+
+.heightPage {
+  height: 100vh;
+  overflow-y: scroll;
+  box-sizing: border-box;
+  padding-bottom:50px
+}
+
+
+
+.json-container {
+  display: flex;
+  gap: 20px;
+}
+
+.json-panel {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.added {
+  background-color: #d4edda;
+  color: #155724;
+  font-weight: bold;
+}
+
+.removed {
+  background-color: #f8d7da;
+  color: #721c24;
+  text-decoration: line-through;
+}
+
+.modified {
+  background-color: #fff3cd; /* Light yellow for modifications */
+  color: #856404; /* Dark yellow text for modified */
+  font-weight: bold;
+}
+.sabres {
+  font-size: 22px;
+
+}
+
+
+
+/* User-searched term (custom highlight) */
+mark.searched-highlight {
+  background-color: rgb(59 130 246 / 27%) !important;
+  color: white;
+  font-weight: bold;
+}
+
+
+.comment-box {
+  position: absolute;
+  background: white;
+  border: 1px solid gray;
+  padding: 5px;
+  z-index: 1000;
+  max-width: 300px;
+  word-wrap: break-word;
+  transform: translateY(-50%); /* Ensures it's aligned properly */
+}

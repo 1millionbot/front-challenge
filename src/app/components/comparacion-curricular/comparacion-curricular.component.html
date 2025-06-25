@@ -1,0 +1,225 @@
+<div class="bg-[#ffffff] heightPage">
+  <app-header></app-header>
+  <main class="container mx-auto mt-4 bg-white shadow-md border border-black rounded-md ">
+    <div class="text-[18px] font-normal mb-4 bg-[#E3E3E3] rounded-md h-15 pageHeading">Comparador curricular</div>
+    <div class="flex flex-col md:flex-row mb-4 mt-4 p-2">
+
+      <p class="text-[18px] font-[300] mb-4 content-page">Selecciona los documentos oficiales que quieres comparar o
+        carga un nuevo documento</p>
+      <button class="rounded-md border border-black text-black w-42 h-10 flex items-center recientesBtn">
+        <span class="recientesText" (click)="openModal()" >Ver recientes</span>
+        <span class="material-symbols-outlined">overview</span>
+      </button>
+    </div>
+    <!-- Ámbito territorial (region) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4 p-3 borderBottomColor">
+      <div class="col-span-1 md:col-span-3">
+        <mat-form-field color="primary" class="multiselectFields w-full">
+          <mat-select [formControl]="toppings" multiple panelClass="topunit" placeholder="Ámbito Territorial">
+            <!-- <mat-select-trigger>
+                {{ toppings.value?.[0] || '' }}
+                @if ((toppings.value?.length || 0) > 1) {
+                  <span class="example-additional-selection">
+                    (+{{ (toppings.value?.length || 0) - 1 }} {{ toppings.value?.length === 2 ? 'other' : 'others' }})
+                  </span>
+                }
+              </mat-select-trigger> -->
+            @for (region of regionsList; track region) {
+            <mat-option [value]="region">{{ region.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- Etapa (stage) -->
+      <div class="col-span-1 md:col-span-3">
+        <mat-form-field color="primary" class="w-full">
+          <mat-select [formControl]="stages" multiple panelClass="topunit" placeholder="Etapa">
+            <!-- <mat-select-trigger>
+                {{ stages.value?.[0] || 'Select stages' }}
+                @if ((stages.value?.length || 0) > 1) {
+                  <span class="example-additional-selection">
+                    (+{{ (stages.value?.length || 0) - 1 }} {{ stages.value?.length === 2 ? 'other' : 'others' }})
+                  </span>
+                }
+              </mat-select-trigger> -->
+            @for (etapa of etapaList; track etapa.id) {
+            <mat-option [value]="etapa.id">{{ etapa.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- Año (year) -->
+      <div class="col-span-1 md:col-span-3">
+        <mat-form-field color="primary" class="multiselectFields w-full">
+          <mat-select [formControl]="years" multiple panelClass="topunit" placeholder="Año">
+            @for (ano of anoList; track ano.id) {
+            <mat-option [value]="ano.name">{{ ano.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+       <!-- Ano with the calender -->
+      <!-- <div class="col-span-1 md:col-span-3">
+        <mat-form-field class="multiselectFields w-full">
+          <mat-label>Año</mat-label>
+          <input matInput [matDatepicker]="picker">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div> -->
+
+      <!-- Tipología (type) -->
+      <div class="col-span-1 md:col-span-2">
+        <mat-form-field color="primary" class="multiselectFields w-full">
+          <mat-select [formControl]="typologies" multiple panelClass="topunit" placeholder="Tipología">
+            <!-- <mat-select-trigger>
+                {{ typologies.value?.[0] || 'Select an Option' }}
+                @if ((typologies.value?.length || 0) > 1) {
+                  <span class="example-additional-selection">
+                    (+{{ (typologies.value?.length || 0) - 1 }} {{ typologies.value?.length === 2 ? 'other' : 'others' }})
+                  </span>
+                }
+              </mat-select-trigger> -->
+            @for (typology of typologiesList; track typology.id) {
+            <mat-option [value]="typology">{{ typology.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-span-1">
+        <button (click)="onHandleSearch()"
+          class="rounded-md border border-black text-black h-full flex py-4 items-center justify-center buscarBtn m-2px">
+          <span class="px-4 mx-4">Buscar</span>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="flex justify-end items-center mb-4 mt-4 p-2">
+      <!-- <span *ngIf="fileName" class="flex justify-end mx-4">
+        {{ fileName }}
+        <button class="ml-2 text-red-500" (click)="cancelUpload()">
+          Cancelar
+        </button>
+      </span>
+      <input type="file" (change)="onFileChange($event)" #fileInput hidden /> -->
+      <button class="rounded-md border border-black text-black px-4 py-2 flex items-center Cargarbtn"
+        (click)="openModal()" 
+        >
+        <span class="cargarbtnText">Cargar documento</span>
+        <mat-icon fontSet="material-symbols-outlined">cloud_upload</mat-icon>
+      </button>
+    </div>
+    
+    
+    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-4 p-2 tableTop">
+      <!-- Resuts Table with draggable rows -->
+      <div class="col-span-1 lg:col-span-3 flex flex-col">
+        <p class="text-lg font-normal mb-2">Resultados</p>
+        <table class="w-full table-auto text-left">
+          <thead>
+            <tr class="bg-[#F6F6F6]">
+              <th class="p-2"></th>
+              <th class="p-2 font-bold">Ámbito Territorial</th>
+              <th class="p-2 font-bold">Denominación Oficial</th>
+              <th class="p-2 font-bold">Etapa</th>
+              <th class="p-2 font-bold">Tipología</th>
+            </tr>
+          </thead>
+          <tbody cdkDropList #tableDataList="cdkDropList" [cdkDropListData]="tableData" [cdkDropListConnectedTo]="[referenciaList, comparacionList]">
+            <ng-container *ngIf="!isLoading; else loadingTemplate">
+              <tr *ngFor="let resultado of tableData" cdkDrag>
+                <td class="p-2"><mat-icon class="drag-handle cursor-pointer">drag_indicator</mat-icon></td>
+                <td hidden>{{ resultado.id }}</td>
+                <td class="p-2 font-light">{{ resultado.comunidad_name }}</td>
+                <td class="p-2 font-light">{{ resultado.denominacion }}</td>
+                <td class="p-2 font-light">{{ resultado.etapa_name }}</td>
+                <td class="p-2 font-light">{{ resultado.tipologia }}</td>
+              </tr>
+            </ng-container>
+              
+            <ng-template #loadingTemplate>
+              <tr>
+                <td colspan="6">
+                  <div class="flex justify-center items-center w-full h-full mt-12">
+                    <mat-spinner></mat-spinner>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+
+              <tr *ngIf="isErrorMessage">
+                <td colspan="6">
+                  <div class="flex justify-center items-center w-full h-full mt-12">
+                    <p>No se encontraron documentos</p>
+                  </div>
+                </td>
+              </tr>
+
+          </tbody>
+          
+        </table>
+      </div>
+    
+      <!-- Drop zone for titles| Legislaciones Section -->
+  <div class="col-span-1 lg:col-span-1 bg-[#F6F6F6] p-4 flex flex-col justify-between">
+      <div>
+            <p class="text-lg font-normal mb-2">Legislaciones seleccionadas</p>
+            <p class="mb-4 font-[300]">Arrastra aquí las legislaciones que quieres comparar.</p>
+          <!-- Referencia Section -->
+        <div cdkDropList #referenciaList="cdkDropList" 
+              [cdkDropListData]="referencias" [cdkDropListConnectedTo]="[comparacionList, tableDataList]" (cdkDropListDropped)="onDrop($event, 'referencia')"
+              class="p-2 mb-2">
+          <p class="mb-2">Referencia</p>
+        <div *ngFor="let ref of referencias; let i = index" cdkDrag class="flex items-center p-2 border-gray-200">
+            <mat-icon class="drag-handle">drag_indicator</mat-icon>
+            <span class="flex-1 ml-6 font-[300]">{{ ref.comunidad_name + " " + ref.denominacion + " " + ref.etapa_name }}</span>
+            <mat-icon (click)="removeFromReferencia(i)">delete</mat-icon>
+        </div>
+  </div>
+  <!-- Comparación Section -->
+      <div cdkDropList #comparacionList="cdkDropList" 
+           [cdkDropListData]="comparaciones" [cdkDropListConnectedTo]="[referenciaList, tableDataList]"  (cdkDropListDropped)="onDrop($event, 'comparacion')" 
+           class="p-2">
+        <p class="mb-2">Comparación</p>
+        <div *ngFor="let comp of comparaciones; let i = index" cdkDrag class="flex items-center p-2 border-gray-200">
+          <mat-icon class="drag-handle">drag_indicator</mat-icon>
+          <span class="flex-1 ml-6 font-[300]">{{ comp.comunidad_name + " " + comp.denominacion + " " + comp.etapa_name }}</span>
+          <mat-icon (click)="removeFromComparacion(i)">delete</mat-icon>
+        </div>
+      </div>
+        </div>
+        <div class="flex justify-center mt-4">
+          <button class="flex items-center rounded-md border border-black text-black px-4 py-2" (click)="onCompare()">
+            Comparar <mat-icon  class="ml-1">compare</mat-icon>             
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Modal -->
+  <div 
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" 
+  *ngIf="isModalOpen">
+  <div class="bg-white rounded-lg p-4 shadow-lg max-w-lg w-full no-data-modal"> 
+    <p class="text-md">Funcionalidad no disponible para esta versión.</p>
+    <div class="mt-4 close-btn">
+      <button 
+        (click)="closeModal()" 
+        class="px-4 py-2 mt-5 bg-red-500 text-white rounded hover:bg-red-600 btn-size">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
+
+ 
+</div>
+
+
+
+
+
+

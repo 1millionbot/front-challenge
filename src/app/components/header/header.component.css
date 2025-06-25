@@ -1,0 +1,6 @@
+.navItemsHeader{
+    flex:1;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 40px;
+  }

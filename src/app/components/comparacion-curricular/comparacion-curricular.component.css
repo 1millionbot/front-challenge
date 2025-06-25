@@ -1,0 +1,72 @@
+
+.content-page {
+  flex: 1;
+}
+.pageHeading {
+  
+  padding: 25px;
+}
+.recientesBtn {
+  height: 30px;
+  border: 0.5px solid;
+  border-bottom: 1.5px solid;
+  font-size: 13px;
+  font-weight: 300;
+  padding: 6px;
+}
+.recientesText {
+  padding-right: 4px;
+}
+.multiselectFields {
+  min-width: 100%;
+}
+
+.buscarBtn {
+  width: 100%;
+  height: 77%;
+  border: 1px solid;
+  border-bottom: 1.5px solid;
+}
+.Cargarbtn {
+  border: 0.5px solid;
+  border-bottom: 1.5px solid;
+  font-size: 14px;
+}
+.cargarbtnText {
+  padding-right: 4px;
+}
+.navItemsHeader{
+  flex:1;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 40px;
+}
+.no-data-modal {
+  padding: 45px;
+  font-weight: 300;
+  font-size: 14px;
+  padding-bottom: 30px;
+}
+.close-btn {
+  display: flex;
+  justify-content: center;
+}
+.btn-size {
+  width: 50%;
+}
+.tableTop {
+  border-top: 1px solid black;
+}
+.borderBottomColor {
+  border-bottom: 1px solid black;
+}
+.container {
+  --bs-gutter-x: 0rem !important;
+}
+
+.heightPage {
+  height: 100vh;
+  overflow-y: scroll;
+  box-sizing: border-box;
+  padding-bottom:50px
+}

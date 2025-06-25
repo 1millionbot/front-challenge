@@ -1,0 +1,20 @@
+.bg-gray-light {
+    background-color: #E3E3E3;
+}
+
+.custom-button {
+    border: none; /* Remove default border */
+    position: relative; /* Positioning for the pseudo-element */
+}
+
+.custom-button::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px; /* Height of the bottom border */
+    background-color: black; /* Color of the bottom border */
+    transition: width 0.3s ease; /* Optional transition effect */
+}

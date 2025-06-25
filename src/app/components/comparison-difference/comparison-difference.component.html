@@ -1,0 +1,896 @@
+<div class="bg-[#ffffff] heightPage">
+    <app-header></app-header>
+    <main class="container mx-auto mt-4 bg-white shadow-md border border-black rounded-md">
+        <div class="text-[18px] font-normal mb-4 bg-[#E3E3E3] rounded-md h-15 pageHeading">Comparador curricular
+        </div>
+        <tabset>
+            <tab heading=" BOE217/2022">
+                <div class="flex flex-col md:flex-row mb-4 mt-4">
+                    <p class="text-[14px] font-[400] mb-4 content-page">Selecciona los filtros que desea aplicar </p>
+                </div>
+
+                <!-- Etapa -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4 p-3">
+                    <div class="col-span-1 md:col-span-3">
+                        <mat-form-field color="primary" class="multiselectFields w-full">
+                            <mat-select [formControl]="etapaFC" multiple panelClass="topunit" placeholder="Etapa">
+                                <!-- comment this out to make the Etapa dropdown selector Functional when it's avaiable -->
+                                <!-- @for (etapa of etapaList; track etapa.id) {
+                                <mat-option [value]="etapa.name">{{etapa.name}}</mat-option>
+                                } -->
+                                <mat-option disabled="" [value]="">Funcionalidad no disponible para esta
+                                    versión</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- Ciclo -->
+                    <div class="col-span-1 md:col-span-3">
+                        <mat-form-field color="primary" class="w-full">
+                            <mat-select [formControl]="cicloFC" multiple panelClass="topunit" placeholder="Ciclo">
+                                @for (ciclo of cicloList; track ciclo.id) {
+                                <mat-option [value]="ciclo.name">{{ciclo.name}}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- Curso -->
+                    <div class="col-span-1 md:col-span-3">
+                        <mat-form-field color="primary" class="multiselectFields w-full">
+                            <mat-select multiple panelClass="topunit" placeholder="Curso">
+                                <mat-option disabled="" [value]="">Funcionalidad no disponible para esta
+                                    versión</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Materia -->
+                    <div class="col-span-1 md:col-span-2">
+                        <mat-form-field color="primary" class="multiselectFields w-full">
+                            <mat-select [formControl]="materiaFC" multiple panelClass="topunit" placeholder="Materia">
+                                @for (materia of materiaList; track materia) {
+                                <mat-option [value]="materia">{{materia}}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-span-1">
+                        <button (click)="onHandleSearch()"
+                            class="rounded-md border border-black text-black h-full flex py-4 items-center justify-center buscarBtn m-2px">
+                            <span class="px-4 mx-4">Filtrar</span>
+                        </button>
+                    </div>
+                </div>
+
+
+
+                <div
+                    class="flex justify-between flex-col sm:flex-row md:flex-row justify-between items-start sm:items-start md:items-center mb-4 mt-2 p-2 grey-color-bg">
+                    <!-- Buscar Palabra -->
+                    <div class="flex flex-col buscar mb-3 sm:mb-4 md:mb-0">
+                        <span class="text-sm mb-2">Buscar Palabra</span>
+                        <div class="flex flex-col sm:flex-row md:flex-row sm:space-x-2 md:space-x-2">
+                            <mat-form-field class="example-full-width relative">
+                                <div class="flex items-center">
+
+                                    <input matInput placeholder="Escribe aquí..." [(ngModel)]="searchTerm"
+                                        (ngModelChange)="clearSearchIndex()" class="flex-1"
+                                        (keydown.enter)="updateHighlightCount()"
+                                        style="font-style: italic;" />
+                                    <span matSuffix class="flex items-center justify-center">
+                                        {{currentCountElementsearched==-1? 0: currentCountElementsearched+1}}/{{ totalElements }}
+                                    </span>
+
+                                    <mat-icon matSuffix class="flex items-center justify-center"
+                                        (click)="clearSearchTerm()">
+                                        cancel
+                                    </mat-icon>
+                                </div>
+                            </mat-form-field>
+
+                            <div class="flex items-center space-x-1 fieldsup mt-2">
+                                <!-- Scroll Up Button -->
+                                <button
+                                    class="w-14 h-14 border border-solid border-black flex items-center justify-center cursor-pointer"
+                                    (click)="scrollToSearchedText('up')" [disabled]="currentCountElement === 0">
+                                    <mat-icon>keyboard_arrow_up</mat-icon>
+                                </button>
+
+                                <!-- Scroll Down Button -->
+                                <button
+                                    class="w-14 h-14 border border-solid border-black flex items-center justify-center cursor-pointer"
+                                    (click)="scrollToSearchedText('down')"
+                                    [disabled]="currentCountElement === totalElements">
+                                    <mat-icon>keyboard_arrow_down</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diferencias with arrows -->
+                    <div class="flex items-center space-x-2 sm:flex-row md:flex-row flex-col">
+                        <span class="text-sm font-medium">Diferencias</span>
+                        <div class="flex items-center space-x-1">
+                            <button
+                                class="w-14 h-14 border border-solid border-black flex items-center justify-center cursor-pointer"
+                                (click)="scrollToNext('arrowUp')">
+                                <mat-icon>keyboard_arrow_up</mat-icon>
+                            </button>
+                            <button
+                                class="w-14 h-14 border border-solid border-black flex items-center justify-center cursor-pointer"
+                                (click)="scrollToNext('arrowDown')">
+                                <mat-icon>keyboard_arrow_down</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Por Validar -->
+                    <div class="">
+                        <p>Por validar: {{porValidar}}</p>
+                    </div>
+
+                </div>
+
+                <!-- Editor layout -->
+                <div class="flex justify-between items-center mb-4 mt-4 p-2 w-[]">
+
+                    <div class="flex space-x-2 ml-auto">
+
+                        <button (click)="openGuardarModal()"
+                            class="rounded-md border border-black text-black flex py-2 items-center justify-center buscarBtn">
+                            <span class="px-2">Guardar</span>
+                            <mat-icon class="text-gray-500">save</mat-icon>
+                        </button>
+                        <button (click)="openDescargarModal()"
+                            class="rounded-md border border-black text-black flex py-2 items-center justify-center buscarBtn">
+                            <span class="px-2">Descargar</span>
+                            <mat-icon class="text-gray-500">download</mat-icon>
+                        </button>
+
+                    </div>
+                </div>
+                <!-- documents comaprison section -->
+
+                <div *ngIf="isComparisonDocumentsLoading" class="flex items-center justify-center h-screen">
+                    <mat-spinner></mat-spinner>
+                </div>
+
+                <div #comparisonContainer *ngIf="!isComparisonDocumentsLoading && comparisonDiffData.length > 0"
+                    class="flex space-x-4" style="height: 700px; overflow-y: scroll; position:relative ;">
+
+                    <!-- ✅ COMMENT BOXES PLACED HERE -->
+                    <div *ngIf="showAllComments" class="bg-white border border-gray-200 z-10">
+                        <ng-container *ngFor="let comment of commentPositions; let i = index">
+                            <div class="comment-box absolute bg-white p-2 border shadow-md"
+                                [ngStyle]="{ top: comment.top + 'px', left: comment.left + 'px' }">
+                                <div class="flex items-right mb-4">
+                                    <button class="absolute right-4 text-black text-xl" (click)="toggleDeleteButton(i)">
+                                        <mat-icon>more_vert</mat-icon>
+                                    </button>
+
+                                    <div *ngIf="comment.isDeleteVisible"
+                                        class="absolute right-0 mt-4 w-56 bg-white shadow-lg rounded-lg border border-gray-200">
+                                        <button (click)="removeCommentUI(i)"
+                                            class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                                            eliminar
+                                        </button>
+                                        <button (click)="editComment(i)"
+                                            class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                                            editar
+                                        </button>
+                                    </div>
+
+                                    <img alt="Profile picture" class="w-10 h-10 rounded-full mr-4" height="40"
+                                        src="/person.png" width="40" />
+                                    <span class="font-bold text-lg">
+                                        María González
+                                    </span>
+                                </div>
+
+                                <p class="w-full p-2 border-black border-r border-l border-t border-b rounded-lg mb-4">
+
+                                    <span class="bg-yellow-200"> {{ comment.comment }}:</span>
+                                    {{
+                                    comment.text
+                                    }}
+                                </p>
+                            </div>
+                        </ng-container>
+
+
+                        <!-- <div *ngFor="let comment of comments; let i = index" style="min-width: fit-content;
+            min-height: fit-content;
+            z-index: 999;
+            position: absolute;"
+        class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md ml-4">
+        <div [style.position]="'absolute'"
+            [style.top.px]="comment.position?.x"
+            [style.left.px]="comment.position?.y"
+            class="bg-white p-6 rounded-lg w-full max-w-md"
+            style="z-index: 999;">
+           
+            <div class="flex items-right mb-4">
+                <button class="absolute right-4 text-black text-xl"
+                    (click)="toggleDeleteButton(i)">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+             
+                <div *ngIf="comment.isDeleteVisible"
+                    class="absolute right-0 mt-4 w-56 bg-white shadow-lg rounded-lg border border-gray-200">
+                    <button (click)="removeCommentUI(i)"
+                        class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                        eliminar
+                    </button>
+                    <button (click)="editComment(i)"
+                        class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                        editar
+                    </button>
+                </div>
+
+                <img alt="Profile picture"
+                    class="w-10 h-10 rounded-full mr-4" height="40"
+                    src="/person.png" width="40" />
+                <span class="font-bold text-lg">
+                    María González {{i}}
+                </span>
+            </div>
+           
+            <p
+                class="w-full p-2 border-black border-r border-l border-t border-b rounded-lg mb-4">
+                <span class="bg-yellow-200">{{
+                    comment.selected_text
+                    }}:</span>
+                {{ comment.comment }}
+            </p>
+        </div>
+    </div> -->
+
+                    </div>
+                    <!-- Left Column -->
+                    <div class="bg-white shadow-md rounded-lg w-1/2 p-4" style="min-height: fit-content;">
+                        <div class="flex bg-[#C7C7C7] justify-between items-center border-b pb-2 mb-2 p-2 ">
+                            <h6 class="text-md font-bold">
+                                {{comparisonDiffData[0]?.comunidad_name || ''}}
+                                {{comparisonDiffData[0]?.documento_denominacion || ''}}
+                            </h6>
+                            <div class="flex space-x-2" (click)="toggleVisibility('rightHeader')">
+                                <mat-icon class="text-gray-500 cursor-pointer">drag_indicator</mat-icon>
+                                <mat-icon class="cursor-pointer">{{isRightHeaderVisible ? 'arrow_drop_down' :
+                                    'arrow_drop_up'}}</mat-icon>
+                            </div>
+                        </div>
+                        <div *ngIf="isRightHeaderVisible" class="mb-4">
+                            <p class="text-md mb-4"
+                                [ngStyle]="{'min-height.px': heights1[0 + ' - ' + comparisonDiffData[0]?.documento_descripcion]}" 
+                                [innerHTML]="comparisonDiffData[0]?.documento_descripcion | highlight:searchTerm"></p>
+                            <hr>
+                        </div>
+
+                        <div class="rounded-lg mb-4">
+                            <accordion [isAnimated]="true">
+                                <ng-container
+                                    *ngFor="let RCompData of getKeys(comparisonDiffData[0]?.area_dicts); let r = index">
+                                    <accordion-group [heading]="RCompData | titlecase" id="custom-accordion" #myGroup
+                                        [isOpen]="accordionStateRight[r]"
+                                        (isOpenChange)="onAccordionToggleRight(r, $event)">
+                                        <ng-container *ngIf="accordionStateRight[r]">
+                                            <div
+                                                *ngFor="let topic of getKeys(comparisonDiffData[0]?.area_dicts[RCompData]); let i = index">
+                                                <accordion-group [heading]="topic | titlecase" #topicGroup
+                                                    [isOpen]="accordionCompetenciasState[i]"
+                                                    (isOpenChange)="onCompetenciasToggle(i, $event)">
+                                                    <ng-container *ngIf="accordionCompetenciasState[i]">
+                                                        <!-- <div class="flex justify-between items-center">
+                                                            <h4  class="font-bold mt-2 bg-red-500" [innerHTML]="topic | highlight:searchTerm"></h4>
+                                                        </div> -->
+                                                        <div
+                                                            *ngFor="let cycleData of getKeys(comparisonDiffData[0]?.area_dicts[RCompData][topic]); let Leftcycle = index">
+                                                            <h6 
+                                                                class="font-[500] mt-3 text-gray-700"> {{topic |
+                                                                titlecase}} {{ Leftcycle + 1 }}
+                                                            </h6>
+                                                            <p 
+                                                                class="font-bold mt-2"
+                                                                [ngStyle]="{'min-height.px': heights1[r + '' + i + ' - ' + cycleData]}"
+                                                                [innerHTML]="cycleData | highlight:searchTerm"></p>
+                                                            <mat-icon style="line-height: 35px;"
+                                                                (click)="toggleCommentbox(Leftcycle, 'left',$event,cycleData)"
+                                                                class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+                                                            <ul class="space-y-2">
+                                                                <div
+                                                                    *ngFor="let cycle of comparisonDiffData[0]?.area_dicts[RCompData][topic][cycleData] | keyvalue; let Leftcycledt = index">
+                                                                    <h6 
+                                                                        class="text-gray-700 font-medium" 
+                                                                        [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + ' - ' + cycle.key]}"
+                                                                        [innerHTML]="cycle.key">
+                                                                    </h6>
+                                                                    <!--  competencias Ciclo's/ saberes heading's text -->
+                                                                    <div *ngIf="isArray(cycle.value)">
+                                                                        <ul *ngFor="let item of cycle.value; let Leftitem = index"
+                                                                            class="space-y-2">
+                                                                            <li 
+                                                                                class="bg-[#F5F3F3] p-2 rounded"
+                                                                                [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftitem + ' - ' + item]}"
+                                                                                [innerHTML]="item | highlight:searchTerm">
+                                                                            </li>
+                                                                            <!-- Use ngIf to check the precomputed value -->
+                                                                            <mat-icon style="line-height: 35px;"
+                                                                                (click)="toggleCommentbox(Leftitem, 'left',$event, item)"
+                                                                                class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+                                                                            <!-- <ng-container *ngIf="selectedDataBox.includes('<mark>')">
+                                                                                    <mat-icon (click)="toggleCommentbox(Leftcycledt)" class="text-md text-gray-500">more_horiz</mat-icon>
+                                                                                </ng-container> -->
+                                                                        </ul>
+                                                                       
+                                                                    </div>
+                                                                <div *ngIf="showParagrahOptions">
+                                                                    <div *ngIf="selectedIconPosition && boxDirection=='left'"
+                                                                        [style.position]="'absolute'"
+                                                                        [style.top.px]="selectedIconPosition.top"
+                                                                        style="left:100px"
+                                                                        class="w-72 bg-white border border-gray-200 z-10 p-2">
+                                                                        <!-- <div *ngIf="showCommentBox" [style.position]="'absolute'" [style.top.px]="commentBoxPosition.y"
+                                                                        [style.left.px]="commentBoxPosition.x" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                                                                        -->
+                                                                        <div class="p-2">
+                                                                            <div (click)="openallowComment(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">add_notes</mat-icon>
+                                                                                <span class="px-2">Añadir
+                                                                                    Comentario</span>
+                                                                            </div>
+                                                                            <div *ngIf="!isMarkedText(selectedDataBox)"
+                                                                                (click)="onHandleAnadirDiferencia(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon fontSet="material-symbols-outlined">add_2</mat-icon>
+                                                                                <span class="px-2">Añadir diferencia</span>
+                                                                            </div>
+                                                                            <div *ngIf="isMarkedText(selectedDataBox)"
+                                                                                (click)="onHandleOmitirDiferencia(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">new_releases</mat-icon>
+                                                                                <span class="px-2">Omitir
+                                                                                    diferencia</span>
+                                                                            </div>
+                                                                            <div *ngIf="isMarkedText(selectedDataBox)"
+                                                                                (click)="scrollToNextSiguiente('arrowDown', $event); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">keyboard_tab</mat-icon>
+                                                                                <span
+                                                                                    class="px-2">Siguiente
+                                                                                    diferencia</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                    <div
+                                                                    *ngIf="!isArray(cycle.value) && isObject(cycle.value)">
+                                                                    <ul class="space-y-2">
+                                                                        <div
+                                                                            *ngFor="let key of getKeys(cycle.value); let Leftkey = index">
+                                                                            <!-- sabeeres 1,2,3... heading, under A,B,C heading -->
+                                                                            <h6 
+                                                                                class="font-medium text-gray-700"
+                                                                                [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + ' - ' + key]}">
+                                                                                {{ key }}</h6>
+                                                                            <div
+                                                                                *ngFor="let subKey of getKeys(getValue(cycle.value, key))  let subKeyItem = index">
+                                                                                <div
+                                                                                    *ngIf="isArray(getValue(cycle.value, key)[subKey])">
+                                                                                    <strong 
+                                                                                        class="text-gray-700"
+                                                                                        [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                        >{{ subKey }}:</strong>
+                                                                                    <ul class="space-y-2 mt-1">
+                                                                                        <li *ngFor="let item of getValue(cycle.value, key)[subKey] let Leftcycleitem = index"
+                                                                                            class="bg-[#F5F3F3] p-2 rounded">
+                                                                                            <span
+                                                                                                [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + '' + Leftcycleitem + ' - ' + item]}"
+                                                                                                [innerHTML]="item | highlight:searchTerm"></span>
+                                                                                            <mat-icon
+                                                                                                style="line-height: 35px;"
+                                                                                                (click)="toggleCommentbox(Leftcycleitem,'left',$event, item)"
+                                                                                                class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                                <div *ngIf="isString(getValue(cycle.value, key)[subKey])"
+                                                                                    class="mt-2">
+                                                                                    <strong 
+                                                                                        class="bg-[#F5F3F3] p-2 rounded" 
+                                                                                        [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                        [innerHTML]="subKey">
+                                                                                    </strong>
+                                                                                    <div>
+                                                                                    <span
+                                                                                        [innerHTML]="getValue(cycle.value, key)[subKey] | highlight:searchTerm"></span>
+                                                                                    </div>
+                                                                                    <mat-icon
+                                                                                        style="line-height: 35px;"
+                                                                                        (click)="toggleCommentbox(subKeyItem,'left',$event,(getValue(cycle.value, key)[subKey]))"
+                                                                                        class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                                </div>
+                                                                                <div *ngIf="!isArray(getValue(cycle.value, key)[subKey]) && !isString(getValue(cycle.value, key)[subKey])"
+                                                                                    class="mt-2">
+                                                                                    <div 
+                                                                                        class="bg-[#F5F3F3] leading-7 p-2 rounded" 
+                                                                                        [ngStyle]="{'min-height.px': heights1[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                        [innerHTML]="subKey"></div>
+                                                                                    <div>
+                                                                                        <span
+                                                                                        [innerHTML]="getValue(cycle.value, key)[subKey] | highlight:searchTerm"></span>
+                                                                                    </div>
+                                                                                    <mat-icon
+                                                                                        style="line-height: 35px;"
+                                                                                        (click)="toggleCommentbox(subKeyItem,'left',$event, subKey )"
+                                                                                        class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ul>
+                                                                </div>
+                                                                    <div *ngIf="!isArray(cycle.value) && !isObject(cycle.value)"
+                                                                        [innerHTML]="getStringValue(cycle.value) | highlight:searchTerm">
+                                                                    </div>
+                                                                    <mat-icon style="line-height: 35px;"
+                                                                        *ngIf="!isArray(cycle.value) && !isObject(cycle.value)"
+                                                                        (click)="toggleCommentbox(Leftcycledt, 'left', $event, getStringValue(cycle.value) )"
+                                                                        class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                </div>
+                                                            </ul>
+                                                        </div>
+                                                    </ng-container>
+
+                                                </accordion-group>
+                                            </div>
+
+                                        </ng-container>
+                                    </accordion-group>
+                                </ng-container>
+                            </accordion>
+                        </div>
+                    </div>
+
+                    <!-- show/pin/hide column -->
+                    <div class="relative mt-4">
+                        <button (click)="togglePin()" class="bg-[#C7C7C7] p-2 pt-3 hover:bg-gray-300 transition-colors">
+                            <mat-icon>arrow_drop_down</mat-icon>
+                        </button>
+                        <div *ngIf="isPinVisible"
+                            class="absolute left-0 mt-2 w-72 bg-white border border-gray-200 shadow-lg z-10">
+                            <div class="p-4">
+                                <div class="font-bold">ANDALUCÍA</div>
+                                <div (click)="openNotInVersionModal()"
+                                    class="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                    <mat-icon fontSet="material-symbols-outlined">visibility</mat-icon>
+                                    <span class="px-2">Mostrar Columna</span>
+                                </div>
+                                <div (click)="openNotInVersionModal()"
+                                    class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                    <mat-icon fontSet="material-symbols-outlined">lock</mat-icon>
+                                    <span class="px-2">Fijar Columna</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="bg-white shadow-md rounded-lg w-1/2 p-4" style="min-height: fit-content;">
+                        <div class="flex bg-[#C7C7C7] justify-between items-center border-b pb-2 mb-2 p-2">
+                            <h6 class="text-md font-bold">
+                                {{comparisonDiffData[1]?.comunidad_name || ''}}
+                                {{comparisonDiffData[1]?.documento_denominacion || ''}}
+                            </h6>
+                            <div class="flex space-x-2" (click)="toggleVisibility('rightHeader')">
+                                <mat-icon class="text-gray-500 cursor-pointer">drag_indicator</mat-icon>
+                                <mat-icon class="cursor-pointer">{{isRightHeaderVisible ? 'arrow_drop_down' :
+                                    'arrow_drop_up'}}</mat-icon>
+                            </div>
+                        </div>
+                        <div *ngIf="isRightHeaderVisible" class="mb-4">
+                            <p class="text-md mb-4"
+                                [ngStyle]="{'min-height.px': heights2[0 + ' - ' + comparisonDiffData[1]?.documento_descripcion]}" 
+                                [innerHTML]="comparisonDiffData[1]?.documento_descripcion | highlight:searchTerm"></p>
+                            <hr>
+                        </div>
+
+
+                        <div class="rounded-lg mb-4">
+                            <accordion [isAnimated]="true">
+                                <ng-container
+                                    *ngFor="let RCompData of getKeys(comparisonDiffData[1]?.area_dicts); let r = index">
+                                    <accordion-group [heading]="RCompData | titlecase" id="custom-accordion" #myGroup
+                                        [isOpen]="accordionStateRight[r]"
+                                        (isOpenChange)="onAccordionToggleRight(r, $event)">
+                                        <ng-container *ngIf="accordionStateRight[r]">
+                                            <div
+                                                *ngFor="let topic of getKeys(comparisonDiffData[1]?.area_dicts[RCompData]); let i = index">
+                                                <accordion-group [heading]="topic | titlecase" #topicGroup
+                                                    [isOpen]="accordionCompetenciasState[i]"
+                                                    (isOpenChange)="onCompetenciasToggle(i, $event)">
+                                                    <ng-container *ngIf="accordionCompetenciasState[i]">
+                                                        <!-- <div class="flex justify-between items-center">
+                                                            <h4  class="font-bold mt-2 bg-red-" 
+                                                                [innerHTML]="topic | highlight:searchTerm"></h4>
+                                                        </div> -->
+                                                        <div
+                                                            *ngFor="let cycleData of getKeys(comparisonDiffData[1]?.area_dicts[RCompData][topic]); let Leftcycle = index">
+                                                            <h6 
+                                                                class="font-[500] mt-3 text-gray-700">
+                                                                {{topic | titlecase}} {{ Leftcycle + 1 }}
+                                                            </h6>
+                                                            <p 
+                                                                class="font-bold mt-2"
+                                                                [ngStyle]="{'min-height.px': heights2[r + '' + i + ' - ' + cycleData]}"
+                                                                [innerHTML]="cycleData | highlight:searchTerm"></p>
+                                                            <mat-icon style="line-height: 35px;"
+                                                                (click)="toggleCommentbox(Leftcycle,'right',$event, cycleData)"
+                                                                class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                            <ul class="space-y-2">
+                                                                <div
+                                                                    *ngFor="let cycle of comparisonDiffData[1]?.area_dicts[RCompData][topic][cycleData] | keyvalue; let Leftcycledt = index">
+                                                                    <!--  competencias Ciclo's heading/ saberes A,B,C.. heading  -->
+                                                                    <h6 
+                                                                        class="text-gray-700 font-medium" 
+                                                                        [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + ' - ' + cycle.key]}"
+                                                                        [innerHTML]="cycle.key">
+                                                                    </h6>
+                                                                    <div *ngIf="isArray(cycle.value)">
+                                                                        <ul *ngFor="let item of cycle.value; let Leftitem = index"
+                                                                            class="space-y-2">
+                                                                            <li 
+                                                                                class="bg-[#F5F3F3] p-2 rounded"
+                                                                                [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftitem + ' - ' + item]}"
+                                                                                [innerHTML]="item | highlight:searchTerm">
+                                                                            </li>
+                                                                            <!-- Use ngIf to check the precomputed value -->
+                                                                            <mat-icon style="line-height: 35px;"
+                                                                                (click)="toggleCommentbox(Leftitem,'right',$event,item )"
+                                                                                class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                            <!-- <ng-container *ngIf="item.includes('<mark>')">
+                                                                                <mat-icon style="line-height: 35px;" (click)="toggleCommentbox(Leftcycledt)" class="text-md text-gray-500">more_horiz</mat-icon>
+                                                                            </ng-container> -->
+                                                                        </ul>
+
+                                                                    </div>
+                                                                <div *ngIf="showParagrahOptions">
+                                                                    <div *ngIf="selectedIconPosition && boxDirection=='right'"
+                                                                        [style.position]="'absolute'"
+                                                                        [style.top.px]="selectedIconPosition.top"
+                                                                        style="left:100px"
+                                                                        class="w-72 bg-white border border-gray-200 z-10 p-2">
+                                                                        <div class="p-2">
+                                                                            <div (click)="openallowComment(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">add_notes</mat-icon>
+                                                                                <span class="px-2">Añadir
+                                                                                    Comentario</span>
+                                                                            </div>
+                                                                            <div *ngIf="!isMarkedText(selectedDataBox)"
+                                                                                (click)="onHandleAnadirDiferencia(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon fontSet="material-symbols-outlined">add_2</mat-icon>
+                                                                                <span class="px-2">Añadir diferencia</span>
+                                                                            </div>
+                                                                            <div *ngIf="isMarkedText(selectedDataBox)"
+                                                                                (click)="onHandleOmitirDiferencia(); closeParagrahOptions()"
+                                                                                class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">new_releases</mat-icon>
+                                                                                <span class="px-2">Omitir
+                                                                                    diferencia</span>
+                                                                            </div>
+                                                                            <div *ngIf="isMarkedText(selectedDataBox)"
+                                                                               class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded"
+                                                                               (click)="scrollToNextSiguiente('arrowDown', $event); closeParagrahOptions()"
+                                                                               >
+                                                                                <mat-icon
+                                                                                    fontSet="material-symbols-outlined">keyboard_tab</mat-icon>
+                                                                                <span
+                                                                                    class="px-2">Siguiente
+                                                                                    diferencia</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                    
+                                                                    <div
+                                                                        *ngIf="isCommentsVisible && selectedIconPosition">
+
+                                                                        <div> <!-- Existing Comments -->
+
+                                                                            <!-- Add/Edit Comment Popup -->
+                                                                            <div *ngIf="showCommentBox"
+                                                                                [style.position]="'absolute'"
+                                                                                [style.top.px]="selectedIconPosition.top-50"
+                                                                                [style.left.px]="selectedIconPosition.left-700"
+                                                                                class="bg-white p-6 rounded-lg w-full max-w-md"
+                                                                                style="z-index: 999;">
+
+                                                                                <div class="flex items-center mb-4">
+                                                                                    <img alt="Profile picture"
+                                                                                        class="w-10 h-10 rounded-full mr-4"
+                                                                                        height="40" src="/person.png"
+                                                                                        width="40" />
+                                                                                    <span
+                                                                                        class="font-bold text-lg">María
+                                                                                        González</span>
+                                                                                </div>
+
+                                                                                <textarea [(ngModel)]="newComment"
+                                                                                    class="w-full p-2 border-black border-r border-l border-t border-b rounded-lg mb-4"
+                                                                                    placeholder="Comenta o añade a otras personas con @"
+                                                                                    rows="2">
+</textarea>
+
+                                                                                <!-- Cancel or Save buttons -->
+                                                                                <div class="flex justify-end space-x-4">
+                                                                                    <!-- Cancel Button -->
+                                                                                    <button (click)="cancelComment()"
+                                                                                        class="border px-4 py-2 rounded-lg border-black">
+                                                                                        Cancelar
+                                                                                    </button>
+
+                                                                                    <!-- Add or Save Button -->
+                                                                                    <button
+                                                                                        (click)="isEditMode ? saveEditedComment() : addComment()"
+                                                                                        *ngIf="showCommentBox"
+                                                                                        class="flex items-center border-b-2 border-black border-r border-l border-t px-4 py-2 rounded-lg">
+                                                                                        {{ isEditMode ? 'Guardar' :
+                                                                                        'Comentar' }}
+                                                                                        <mat-icon
+                                                                                            fontSet="material-symbols-outlined"
+                                                                                            class="ml-1">
+                                                                                            {{ isEditMode ? 'edit' :
+                                                                                            'add_notes' }}
+                                                                                        </mat-icon>
+                                                                                    </button>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        *ngIf="!isArray(cycle.value) && isObject(cycle.value)">
+                                                                        <ul class="space-y-2">
+                                                                            <div
+                                                                                *ngFor="let key of getKeys(cycle.value); let Leftkey = index">
+                                                                                <!-- sabeeres 1,2,3... heading, under A,B,C heading -->
+                                                                                <h6 
+                                                                                    class="font-medium text-gray-700"
+                                                                                    [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + ' - ' + key]}">
+                                                                                    {{ key }}</h6>
+                                                                                <div
+                                                                                    *ngFor="let subKey of getKeys(getValue(cycle.value, key))  let subKeyItem = index">
+                                                                                    <div
+                                                                                        *ngIf="isArray(getValue(cycle.value, key)[subKey])">
+                                                                                        <strong 
+                                                                                            class="text-gray-700"
+                                                                                            [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                            >{{ subKey }}:</strong>
+                                                                                        <ul class="space-y-2 mt-1">
+                                                                                            <li *ngFor="let item of getValue(cycle.value, key)[subKey] let Leftcycleitem = index"
+                                                                                                class="bg-[#F5F3F3] p-2 rounded">
+                                                                                                <span
+                                                                                                    [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + '' + Leftcycleitem + ' - ' + item]}"
+                                                                                                    [innerHTML]="item | highlight:searchTerm"></span>
+                                                                                                <mat-icon
+                                                                                                    style="line-height: 35px;"
+                                                                                                    (click)="toggleCommentbox(Leftcycleitem,'right',$event, item)"
+                                                                                                    class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                    <div *ngIf="isString(getValue(cycle.value, key)[subKey])"
+                                                                                        class="mt-2">
+                                                                                        <strong 
+                                                                                            class="bg-[#F5F3F3] p-2 rounded" 
+                                                                                            [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                            [innerHTML]="subKey"></strong>
+                                                                                        <div>
+                                                                                        <span
+                                                                                            [innerHTML]="getValue(cycle.value, key)[subKey] | highlight:searchTerm"></span>
+                                                                                        </div>
+                                                                                        <mat-icon
+                                                                                            style="line-height: 35px;"
+                                                                                            (click)="toggleCommentbox(subKeyItem,'right',$event,(getValue(cycle.value, key)[subKey]))"
+                                                                                            class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                                    </div>
+                                                                                    <div *ngIf="!isArray(getValue(cycle.value, key)[subKey]) && !isString(getValue(cycle.value, key)[subKey])"
+                                                                                        class="mt-2">
+                                                                                        <div 
+                                                                                            class="bg-[#F5F3F3] leading-7 p-2 rounded" 
+                                                                                            [ngStyle]="{'min-height.px': heights2[r + '' + i + '' + Leftcycle + '' + Leftcycledt + '' + Leftkey + '' + subKeyItem + ' - ' + subKey]}"
+                                                                                            [innerHTML]="subKey"></div>
+                                                                                        <div>
+                                                                                            <span
+                                                                                                [innerHTML]="getValue(cycle.value, key)[subKey] | highlight:searchTerm"></span>
+                                                                                        </div>
+                                                                                        <mat-icon
+                                                                                            style="line-height: 35px;"
+                                                                                            (click)="toggleCommentbox(subKeyItem,'right',$event, subKey )"
+                                                                                            class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </ul>
+                                                                    </div>
+
+                                                                    <div *ngIf="!isArray(cycle.value) && !isObject(cycle.value)"
+                                                                        [innerHTML]="getStringValue(cycle.value) | highlight:searchTerm">
+                                                                    </div>
+                                                                    <mat-icon
+                                                                        *ngIf="!isArray(cycle.value) && !isObject(cycle.value)"
+                                                                        style="line-height: 35px;"
+                                                                        (click)="toggleCommentbox(Leftcycledt,'right',$event, getStringValue(cycle.value) )"
+                                                                        class="text-md text-gray-500 cursor-pointer">more_horiz</mat-icon>
+
+
+                                                                </div>
+                                                            </ul>
+                                                        </div>
+
+                                                    </ng-container>
+                                                </accordion-group>
+                                            </div>
+
+                                        </ng-container>
+                                    </accordion-group>
+                                </ng-container>
+
+                            </accordion>
+                        </div>
+
+
+
+                    </div>
+
+
+                </div>
+
+            </tab>
+            <tab heading="BOE217/2022">
+                <!-- not in version modal -->
+                <div *ngIf="isNotInVersionModalTab"
+                    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 border-black border-b-2">
+                    <div class="rounded-lg border-t border-r border-b-2 border-l border-black bg-white p-4 shadow-lg">
+                        <p class="text-md">Funcionalidad no disponible para esta versión.</p>
+                        <div class="mt-4 flex justify-center">
+                            <button (click)="closeNotInVersionModalTab()"
+                                class="px-4 py-2 mt-2 rounded hover:bg-gray-100 btn-size border border-black border-b-2 items-center justify-center flex">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </tab>
+        </tabset>
+    </main>
+    <!-- Guardar Modal -->
+    <div *ngIf="isGuardarModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div
+            class="relative border border-black border-b-2 p-4 sm:p-8 rounded-lg h-auto sm:h-auto flex flex-col justify-between max-w-4xl w-full mx-4 bg-white">
+            <p class="text-black text-sm sm:text-xl mb-8 text-left mt-8 py-8">
+                <!-- Existen diferencias entre los documentos sin validar,<br class="hidden sm:inline">
+                ¿quieres validar todas las diferencias y guardar los cambios? -->
+                ¿Guardar los cambios?
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
+                <button (click)="closeGuardarModal()"
+                    class="border border-black border-b-2 rounded-lg px-4 py-2 text-black text-sm sm:text-lg">
+                    Cancelar
+                </button>
+                <button (click)="onHandleGuardar()"
+                    class="border border-black border-b-2 rounded-lg px-4 py-2 text-black text-sm sm:text-lg flex items-center justify-center">
+                    <!-- Sí, validar todo el documento y guardar <mat-icon>check</mat-icon> -->
+                    Sí <mat-icon>check</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Guardar Modal End -->
+    <!-- Descargar Modal -->
+    <div *ngIf="isDescargarModalOpen"
+        class="fixed inset-0 flex h-screen items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white flex items-center justify-center w-[585px]">
+            <div class="relative w-full max-w-2xl mx-auto text-center border border-black border-b-2 p-8">
+                <button (click)="closeDescargarModal()" class="absolute top-4 right-4 text-black text-xl">X
+                    Cerrar</button>
+                <p class="text-black text-xl mt-16 py-8 text-left">Descargar como:</p>
+                <div class="mt-4 flex justify-center gap-2">
+                    <!-- <img class="w-20" src="/pdf.png" alt=""> -->
+                    <img class="w-20" src="/xls.png" alt="">
+                </div>
+                <button (click)="onHandleDescargar()"
+                    class="mt-8 px-8 py-4 border border-black border-b-2 rounded-lg text-black text-xl">Descargar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- display comments popups -->
+
+<!-- chat toggle UI -->
+<div (click)="toggleComments()" class="cursor-pointer">
+    <span *ngIf="isCommentsVisible"
+        class="absolute h-14 w-14 rounded-full border-2 border-gray-500 bg-white top-1 right-4 flex items-center justify-center">
+        <mat-icon>close</mat-icon>
+    </span>
+    <span *ngIf="!isCommentsVisible"
+        class="absolute h-14 w-14 rounded-full border-2 border-gray-500 bg-white top-1 right-4 flex items-center justify-center">
+        <mat-icon>chat</mat-icon>
+    </span>
+</div>
+<!-- Not in version Modal -->
+<div *ngIf="isNotInVersionModal"
+    class="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 border-black border-b-2">
+    <div class="rounded-lg border-t border-r border-b-2 border-l border-black bg-white p-4 shadow-lg">
+        <p class="text-md">Funcionalidad no disponible para esta versión.</p>
+        <div class="mt-4 flex justify-center">
+            <button (click)="closeNotInVersionModal()"
+                class="px-4 py-2 mt-2 rounded hover:bg-gray-100 btn-size border border-black border-b-2 items-center justify-center flex">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div *ngFor="let comment of comments; let i = index" style="min-width: fit-content;
+            min-height: fit-content;
+            z-index: 999;
+            position: absolute;"
+        class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md ml-4">
+        <div [style.position]="'absolute'"
+            [style.top.px]="comment.position?.x"
+            [style.left.px]="comment.position?.y"
+            class="bg-white p-6 rounded-lg w-full max-w-md"
+            style="z-index: 999;">
+           
+            <div class="flex items-right mb-4">
+                <button class="absolute right-4 text-black text-xl"
+                    (click)="toggleDeleteButton(i)">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+             
+                <div *ngIf="comment.isDeleteVisible"
+                    class="absolute right-0 mt-4 w-56 bg-white shadow-lg rounded-lg border border-gray-200">
+                    <button (click)="removeCommentUI(i)"
+                        class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                        eliminar
+                    </button>
+                    <button (click)="editComment(i)"
+                        class="block w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-100">
+                        editar
+                    </button>
+                </div>
+
+                <img alt="Profile picture"
+                    class="w-10 h-10 rounded-full mr-4" height="40"
+                    src="/person.png" width="40" />
+                <span class="font-bold text-lg">
+                    María González {{i}}
+                </span>
+            </div>
+           
+            <p
+                class="w-full p-2 border-black border-r border-l border-t border-b rounded-lg mb-4">
+                <span class="bg-yellow-200">{{
+                    comment.selected_text
+                    }}:</span>
+                {{ comment.comment }}
+            </p>
+        </div>
+    </div> -->
